@@ -13,6 +13,19 @@ public:
 	Vector3(float value) : X(value), Y(value), Z(value) {}
 	Vector3(Vector2 xy, float z) : X(xy.X), Y(xy.Y), Z(z) {}
 
+	// Static members  
+	static const Vector3 Zero;
+	static const Vector3 One;
+	static const Vector3 UnitX;
+	static const Vector3 UnitY;
+	static const Vector3 UnitZ;
+	static const Vector3 Up;
+	static const Vector3 Down;
+	static const Vector3 Right;
+	static const Vector3 Left;
+	static const Vector3 Forward;
+	static const Vector3 Backward;
+
 	// Operator overloads
 	Vector3& operator=(const Vector3& other);
 	Vector3 operator+(const Vector3& other) const;
@@ -60,6 +73,7 @@ public:
 	static void Hermite(Vector3& value1, Vector3& tangent1, Vector3& value2, Vector3& tangent2, float amount, Vector3& result);
 	static float Length(Vector3& vector);
 	static float LengthSquared(Vector3& vector);
+	float LengthSquared();
 	static Vector3 Lerp(Vector3 value1, Vector3 value2, float amount);
 	static void Lerp(Vector3& value1, Vector3& value2, float amount, Vector3& result);
 	static Vector3 LerpPrecise(Vector3 value1, Vector3 value2, float amount);
@@ -72,6 +86,7 @@ public:
 	static Vector3 Multiply(Vector3 value1, float scaleFactor);
 	static void Multiply(Vector3& value1, float scaleFactor, Vector3& result);
 	static void Multiply(Vector3& value1, Vector3& value2, Vector3& result);
+	Vector3 Negate();
 	static Vector3 Negate(Vector3 value);
 	static void Negate(Vector3& value, Vector3& result);
 	static Vector3 Normalize(Vector3 value);

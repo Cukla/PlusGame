@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="Graphics\Viewport.cpp" />
     <ClCompile Include="MathHelper.cpp" />
+    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Rectangle.cpp" />
@@ -139,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="Graphics\Viewport.h" />
     <ClInclude Include="MathHelper.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Rectangle.h" />

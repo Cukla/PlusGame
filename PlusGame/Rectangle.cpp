@@ -1,41 +1,41 @@
 #include "Rectangle.h"
 
-int Rectangle::getRight()
+int Rectangle::GetRight()
 {
 	return X + Width;
 }
 
-int Rectangle::getLeft()
+int Rectangle::GetLeft()
 {
 	return X;
 }
 
-int Rectangle::getTop()
+int Rectangle::GetTop()
 {
 	return Y;
 }
 
-int Rectangle::getBottom()
+int Rectangle::GetBottom()
 {
 	return Y + Height;
 }
 
-bool Rectangle::isEmpty()
+bool Rectangle::IsEmpty()
 {
 	return ((((this->Width == 0) && (this->Height == 0)) && (this->X == 0)) && (this->Y == 0));;
 }
 
-Point Rectangle::getLocation()
+Point Rectangle::GetLocation()
 {
 	return Point(X, Y);
 }
 
-Point Rectangle::getSize()
+Point Rectangle::GetSize()
 {
 	return Point(Width, Height);
 }
 
-Point Rectangle::getCenter()
+Point Rectangle::GetCenter()
 {
 	return Point(this->X + (this->Width / 2), this->Y + (this->Height / 2));
 }

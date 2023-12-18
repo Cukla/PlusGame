@@ -1,5 +1,16 @@
 #include "Vector3.h" 
-
+// Static member definitions 
+const Vector3 Vector3::Zero(0.0f, 0.0f, 0.0f);
+const Vector3 Vector3::One(1.0f, 1.0f, 1.0f);
+const Vector3 Vector3::UnitX(1.0f, 0.0f, 0.0f);
+const Vector3 Vector3::UnitY(0.0f, 1.0f, 0.0f);
+const Vector3 Vector3::UnitZ(0.0f, 0.0f, 1.0f);
+const Vector3 Vector3::Up(0.0f, 1.0f, 0.0f);
+const Vector3 Vector3::Down(0.0f, -1.0f, 0.0f);
+const Vector3 Vector3::Right(1.0f, 0.0f, 0.0f);
+const Vector3 Vector3::Left(-1.0f, 0.0f, 0.0f);
+const Vector3 Vector3::Forward(0.0f, 0.0f, -1.0f);
+const Vector3 Vector3::Backward(0.0f, 0.0f, 1.0f);
 // Operator overloads
 Vector3& Vector3::operator=(const Vector3& other)
 {
@@ -305,7 +316,10 @@ float Vector3::LengthSquared(Vector3& vector)
 {
 	return (vector.X * vector.X) + (vector.Y * vector.Y) + (vector.Z * vector.Z);
 }
-
+float Vector3::LengthSquared()
+{
+	return (X * X) + (Y * Y) + (Z * Z);
+}
 Vector3 Vector3::Lerp(Vector3 value1, Vector3 value2, float amount)
 {
 	return Vector3(
@@ -398,6 +412,11 @@ void Vector3::Multiply(Vector3& value1, Vector3& value2, Vector3& result)
 	result.X = value1.X * value2.X;
 	result.Y = value1.Y * value2.Y;
 	result.Z = value1.Z * value2.Z;
+}
+
+Vector3 Vector3::Negate()
+{
+	return Vector3(-X, -Y, -Z);;
 }
 
 Vector3 Vector3::Negate(Vector3 value)

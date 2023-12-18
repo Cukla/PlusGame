@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3.h"
+#include "Matrix.h"
 class Quaternion
 {
 public:
@@ -16,7 +17,9 @@ public:
 	Quaternion(Vector3 value, float w) :X(value.X), Y(value.Y), Z(value.Z), W(w) {}
 	//Quaternion(Vector4 value) {}
 
-	 // Assignment operator
+	static const Quaternion Identity;
+
+	// Assignment operator
 	Quaternion& operator=(const Quaternion& other);
 
 	// Quaternion operations
@@ -63,6 +66,9 @@ public:
 
 	void Negate();
 	void Normalize();
+
+	static Quaternion CreateFromRotationMatrix(Matrix& matrix);
+	static void CreateFromRotationMatrix(Matrix& matrix, Quaternion& result);
 
 	Quaternion operator+(const Quaternion& quaternion) const;
 	Quaternion operator/(const Quaternion& quaternion) const;

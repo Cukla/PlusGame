@@ -1,5 +1,6 @@
 #include "Quaternion.h"
 
+const Quaternion Quaternion::Identity(0, 0, 0, 1);
 Quaternion& Quaternion::operator=(const Quaternion& other)
 {
 	if (this != &other)
@@ -430,6 +431,108 @@ void Quaternion::Normalize()
 	W *= num;
 }
 
+Quaternion Quaternion::CreateFromRotationMatrix(Matrix& matrix)
+{
+	Quaternion quaternion;
+	float sqrtv;
+	float half;
+	float scale = matrix.M11 + matrix.M22 + matrix.M33;
+
+	if (scale > 0.0f)
+	{
+		sqrtv = sqrt(scale + 1.0f);
+		quaternion.W = sqrtv * 0.5f;
+		sqrtv = 0.5f / sqrtv;
+
+		quaternion.X = (matrix.M23 - matrix.M32) * sqrtv;
+		quaternion.Y = (matrix.M31 - matrix.M13) * sqrtv;
+		quaternion.Z = (matrix.M12 - matrix.M21) * sqrtv;
+
+		return quaternion;
+	}
+	if ((matrix.M11 >= matrix.M22) && (matrix.M11 >= matrix.M33))
+	{
+		sqrtv = sqrt(1.0f + matrix.M11 - matrix.M22 - matrix.M33);
+		half = 0.5f / sqrtv;
+
+		quaternion.X = 0.5f * sqrtv;
+		quaternion.Y = (matrix.M12 + matrix.M21) * half;
+		quaternion.Z = (matrix.M13 + matrix.M31) * half;
+		quaternion.W = (matrix.M23 - matrix.M32) * half;
+
+		return quaternion;
+	}
+	if (matrix.M22 > matrix.M33)
+	{
+		sqrtv = sqrt(1.0f + matrix.M22 - matrix.M11 - matrix.M33);
+		half = 0.5f / sqrtv;
+
+		quaternion.X = (matrix.M21 + matrix.M12) * half;
+		quaternion.Y = 0.5f * sqrtv;
+		quaternion.Z = (matrix.M32 + matrix.M23) * half;
+		quaternion.W = (matrix.M31 - matrix.M13) * half;
+
+		return quaternion;
+	}
+	sqrtv = sqrt(1.0f + matrix.M33 - matrix.M11 - matrix.M22);
+	half = 0.5f / sqrtv;
+
+	quaternion.X = (matrix.M31 + matrix.M13) * half;
+	quaternion.Y = (matrix.M32 + matrix.M23) * half;
+	quaternion.Z = 0.5f * sqrtv;
+	quaternion.W = (matrix.M12 - matrix.M21) * half;
+
+	return quaternion;
+}
+
+void Quaternion::CreateFromRotationMatrix(Matrix& matrix, Quaternion& result)
+{
+	float sqrtv;
+	float half;
+	float scale = matrix.M11 + matrix.M22 + matrix.M33;
+
+	if (scale > 0.0f)
+	{
+		sqrtv = sqrt(scale + 1.0f);
+		result.W = sqrtv * 0.5f;
+		sqrtv = 0.5f / sqrtv;
+
+		result.X = (matrix.M23 - matrix.M32) * sqrtv;
+		result.Y = (matrix.M31 - matrix.M13) * sqrtv;
+		result.Z = (matrix.M12 - matrix.M21) * sqrtv;
+	}
+	else
+		if ((matrix.M11 >= matrix.M22) && (matrix.M11 >= matrix.M33))
+		{
+			sqrtv = sqrt(1.0f + matrix.M11 - matrix.M22 - matrix.M33);
+			half = 0.5f / sqrtv;
+
+			result.X = 0.5f * sqrtv;
+			result.Y = (matrix.M12 + matrix.M21) * half;
+			result.Z = (matrix.M13 + matrix.M31) * half;
+			result.W = (matrix.M23 - matrix.M32) * half;
+		}
+		else if (matrix.M22 > matrix.M33)
+		{
+			sqrtv = sqrt(1.0f + matrix.M22 - matrix.M11 - matrix.M33);
+			half = 0.5f / sqrtv;
+
+			result.X = (matrix.M21 + matrix.M12) * half;
+			result.Y = 0.5f * sqrtv;
+			result.Z = (matrix.M32 + matrix.M23) * half;
+			result.W = (matrix.M31 - matrix.M13) * half;
+		}
+		else
+		{
+			sqrtv = sqrt(1.0f + matrix.M33 - matrix.M11 - matrix.M22);
+			half = 0.5f / sqrtv;
+
+			result.X = (matrix.M31 + matrix.M13) * half;
+			result.Y = (matrix.M32 + matrix.M23) * half;
+			result.Z = 0.5f * sqrtv;
+			result.W = (matrix.M12 - matrix.M21) * half;
+		}
+}
 Quaternion Quaternion::operator+(const Quaternion& quaternion) const
 {
 	Quaternion result;
