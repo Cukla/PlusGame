@@ -145,6 +145,9 @@ public:
 	static Matrix Subtract(Matrix& matrix1, Matrix& matrix2);
 	static void Subtract(Matrix& matrix1, Matrix& matrix2, Matrix& result);
 
+	static Matrix Transpose(Matrix& matrix);
+	static void Transpose(Matrix& matrix, Matrix& result);
+
 	// Matrix addition
 	friend Matrix operator+(const Matrix& matrix1, const Matrix& matrix2);
 	// Matrix division by another matrix

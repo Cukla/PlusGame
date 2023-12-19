@@ -257,7 +257,7 @@ void Vector3::Divide(Vector3& value1, Vector3& value2, Vector3& result)
 	result.Z = value1.Z / value2.Z;
 }
 
-float Vector3::Dot(Vector3 value1, Vector3 value2)
+float Vector3::Dot(Vector3& value1, Vector3& value2)
 {
 	return value1.X * value2.X + value1.Y * value2.Y + value1.Z * value2.Z;
 }
@@ -542,4 +542,162 @@ void Vector3::Subtract(Vector3& value1, Vector3& value2, Vector3& result)
 	result.X = value1.X - value2.X;
 	result.Y = value1.Y - value2.Y;
 	result.Z = value1.Z - value2.Z;
+}
+
+/// <summary>
+/// Creates a new <see cref="Vector3"/> that contains a transformation of 3d-vector by the specified <see cref="Matrix"/>.
+/// </summary>
+/// <param name="position">Source <see cref="Vector3"/>.</param>
+/// <param name="matrix">The transformation <see cref="Matrix"/>.</param>
+/// <returns>Transformed <see cref="Vector3"/>.</returns>
+Vector3 Vector3::Transform(Vector3& position, Matrix& matrix)
+{
+	Transform(position, matrix, position);
+	return position;
+}
+
+/// <summary>
+/// Creates a new <see cref="Vector3"/> that contains a transformation of 3d-vector by the specified <see cref="Matrix"/>.
+/// </summary>
+/// <param name="position">Source <see cref="Vector3"/>.</param>
+/// <param name="matrix">The transformation <see cref="Matrix"/>.</param>
+/// <param name="result">Transformed <see cref="Vector3"/> as an output parameter.</param>
+void Vector3::Transform(Vector3& position, Matrix& matrix, Vector3& result)
+{
+	auto x = (position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31) + matrix.M41;
+	auto y = (position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32) + matrix.M42;
+	auto z = (position.X * matrix.M13) + (position.Y * matrix.M23) + (position.Z * matrix.M33) + matrix.M43;
+	result.X = x;
+	result.Y = y;
+	result.Z = z;
+}
+
+/// <summary>
+/// Creates a new <see cref="Vector3"/> that contains a transformation of 3d-vector by the specified <see cref="Quaternion"/>, representing the rotation.
+/// </summary>
+/// <param name="value">Source <see cref="Vector3"/>.</param>
+/// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
+/// <returns>Transformed <see cref="Vector3"/>.</returns>
+Vector3 Vector3::Transform(Vector3& value, Quaternion& rotation)
+{
+	Vector3 result;
+	Transform(value, rotation, result);
+	return result;
+}
+
+/// <summary>
+/// Creates a new <see cref="Vector3"/> that contains a transformation of 3d-vector by the specified <see cref="Quaternion"/>, representing the rotation.
+/// </summary>
+/// <param name="value">Source <see cref="Vector3"/>.</param>
+/// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
+/// <param name="result">Transformed <see cref="Vector3"/> as an output parameter.</param>
+void Vector3::Transform(Vector3& value, Quaternion& rotation, Vector3& result)
+{
+	float x = 2 * (rotation.Y * value.Z - rotation.Z * value.Y);
+	float y = 2 * (rotation.Z * value.X - rotation.X * value.Z);
+	float z = 2 * (rotation.X * value.Y - rotation.Y * value.X);
+
+	result.X = value.X + x * rotation.W + (rotation.Y * z - rotation.Z * y);
+	result.Y = value.Y + y * rotation.W + (rotation.Z * x - rotation.X * z);
+	result.Z = value.Z + z * rotation.W + (rotation.X * y - rotation.Y * x);
+}
+
+/// <summary>
+/// Apply transformation on vectors within array of <see cref="Vector3"/> by the specified <see cref="Matrix"/> and places the results in an another array.
+/// </summary>
+/// <param name="sourceArray">Source array.</param>
+/// <param name="sourceIndex">The starting index of transformation in the source array.</param>
+/// <param name="matrix">The transformation <see cref="Matrix"/>.</param>
+/// <param name="destinationArray">Destination array.</param>
+/// <param name="destinationIndex">The starting index in the destination array, where the first <see cref="Vector3"/> should be written.</param>
+/// <param name="length">The number of vectors to be transformed.</param>
+void Vector3::Transform(Vector3* sourceArray, int sourceIndex, Matrix& matrix, Vector3* destinationArray, int destinationIndex, int length)
+{
+	// TODO: Are there options on some platforms to implement a vectorized version of this?
+
+	for (auto i = 0; i < length; i++)
+	{
+		auto position = sourceArray[sourceIndex + i];
+		destinationArray[destinationIndex + i] =
+			Vector3(
+				(position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31) + matrix.M41,
+				(position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32) + matrix.M42,
+				(position.X * matrix.M13) + (position.Y * matrix.M23) + (position.Z * matrix.M33) + matrix.M43);
+	}
+}
+
+/// <summary>
+/// Apply transformation on vectors within array of <see cref="Vector3"/> by the specified <see cref="Quaternion"/> and places the results in an another array.
+/// </summary>
+/// <param name="sourceArray">Source array.</param>
+/// <param name="sourceIndex">The starting index of transformation in the source array.</param>
+/// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
+/// <param name="destinationArray">Destination array.</param>
+/// <param name="destinationIndex">The starting index in the destination array, where the first <see cref="Vector3"/> should be written.</param>
+/// <param name="length">The number of vectors to be transformed.</param>
+void Vector3::Transform(Vector3* sourceArray, int sourceIndex, Quaternion& rotation, Vector3* destinationArray, int destinationIndex, int length)
+{
+	// TODO: Are there options on some platforms to implement a vectorized version of this?
+
+	for (auto i = 0; i < length; i++)
+	{
+		auto position = sourceArray[sourceIndex + i];
+
+		float x = 2 * (rotation.Y * position.Z - rotation.Z * position.Y);
+		float y = 2 * (rotation.Z * position.X - rotation.X * position.Z);
+		float z = 2 * (rotation.X * position.Y - rotation.Y * position.X);
+
+		destinationArray[destinationIndex + i] =
+			Vector3(
+				position.X + x * rotation.W + (rotation.Y * z - rotation.Z * y),
+				position.Y + y * rotation.W + (rotation.Z * x - rotation.X * z),
+				position.Z + z * rotation.W + (rotation.X * y - rotation.Y * x));
+	}
+}
+
+/// <summary>
+/// Apply transformation on all vectors within array of <see cref="Vector3"/> by the specified <see cref="Matrix"/> and places the results in an another array.
+/// </summary>
+/// <param name="sourceArray">Source array.</param>
+/// <param name="matrix">The transformation <see cref="Matrix"/>.</param>
+/// <param name="destinationArray">Destination array.</param>
+void Vector3::Transform(Vector3* sourceArray, Matrix& matrix, Vector3* destinationArray)
+{
+	// TODO: Are there options on some platforms to implement a vectorized version of this?
+	int lenght = sizeof(sourceArray) / sizeof(sourceArray[0]);
+	for (auto i = 0; i < lenght; i++)
+	{
+		auto position = sourceArray[i];
+		destinationArray[i] =
+			Vector3(
+				(position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31) + matrix.M41,
+				(position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32) + matrix.M42,
+				(position.X * matrix.M13) + (position.Y * matrix.M23) + (position.Z * matrix.M33) + matrix.M43);
+	}
+}
+
+/// <summary>
+/// Apply transformation on all vectors within array of <see cref="Vector3"/> by the specified <see cref="Quaternion"/> and places the results in an another array.
+/// </summary>
+/// <param name="sourceArray">Source array.</param>
+/// <param name="rotation">The <see cref="Quaternion"/> which contains rotation transformation.</param>
+/// <param name="destinationArray">Destination array.</param>
+void Vector3::Transform(Vector3* sourceArray, Quaternion rotation, Vector3* destinationArray)
+{
+	// TODO: Are there options on some platforms to implement a vectorized version of this?
+	int lenght = sizeof(sourceArray) / sizeof(sourceArray[0]);
+	for (auto i = 0; i < lenght; i++)
+	{
+		auto position = sourceArray[i];
+
+		float x = 2 * (rotation.Y * position.Z - rotation.Z * position.Y);
+		float y = 2 * (rotation.Z * position.X - rotation.X * position.Z);
+		float z = 2 * (rotation.X * position.Y - rotation.Y * position.X);
+
+		destinationArray[i] =
+			Vector3(
+				position.X + x * rotation.W + (rotation.Y * z - rotation.Z * y),
+				position.Y + y * rotation.W + (rotation.Z * x - rotation.X * z),
+				position.Z + z * rotation.W + (rotation.X * y - rotation.Y * x));
+	}
 }

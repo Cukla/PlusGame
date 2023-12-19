@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector2.h"
+#include "Matrix.h"
 struct Vector3
 {
 public:
@@ -65,7 +66,7 @@ public:
 	static Vector3 Divide(Vector3 value1, float divider);
 	static void Divide(Vector3& value1, float divider, Vector3& result);
 	static void Divide(Vector3& value1, Vector3& value2, Vector3& result);
-	static float Dot(Vector3 value1, Vector3 value2);
+	static float Dot(Vector3& value1, Vector3& value2);
 	static void Dot(Vector3& value1, Vector3& value2, float& result);
 	static Vector3 Floor(Vector3 value);
 	static void Floor(Vector3& value, Vector3& result);
@@ -99,6 +100,15 @@ public:
 	static void SmoothStep(Vector3& value1, Vector3& value2, float amount, Vector3& result);
 	static Vector3 Subtract(Vector3 value1, Vector3 value2);
 	static void Subtract(Vector3& value1, Vector3& value2, Vector3& result);
+
+	static Vector3 Transform(Vector3& position, Matrix& matrix);
+	static void Transform(Vector3& position, Matrix& matrix, Vector3& result);
+	static Vector3 Transform(Vector3& value, Quaternion& rotation);
+	static void Transform(Vector3& value, Quaternion& rotation, Vector3& result);
+	static void Transform(Vector3* sourceArray, int sourceIndex, Matrix& matrix, Vector3* destinationArray, int destinationIndex, int length);
+	static void Transform(Vector3* sourceArray, int sourceIndex, Quaternion& rotation, Vector3* destinationArray, int destinationIndex, int length);
+	static void Transform(Vector3* sourceArray, Matrix& matrix, Vector3* destinationArray);
+	static void Transform(Vector3* sourceArray, Quaternion rotation, Vector3* destinationArray);
 
 	//TODO implement Transform
 };

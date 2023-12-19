@@ -1607,6 +1607,50 @@ void Matrix::Subtract(Matrix& matrix1, Matrix& matrix2, Matrix& result)
 	result.M44 = matrix1.M44 - matrix2.M44;
 }
 
+/// <summary>
+/// Swap the matrix rows and columns.
+/// </summary>
+/// <param name="matrix">The matrix for transposing operation.</param>
+/// <returns>The new <see cref="Matrix"/> which contains the transposing result.</returns>
+Matrix Matrix::Transpose(Matrix& matrix)
+{
+	Matrix ret;
+	Transpose(matrix, ret);
+	return ret;
+}
+
+/// <summary>
+/// Swap the matrix rows and columns.
+/// </summary>
+/// <param name="matrix">The matrix for transposing operation.</param>
+/// <param name="result">The new <see cref="Matrix"/> which contains the transposing result as an output parameter.</param>
+void Matrix::Transpose(Matrix& matrix, Matrix& result)
+{
+	Matrix ret;
+
+	ret.M11 = matrix.M11;
+	ret.M12 = matrix.M21;
+	ret.M13 = matrix.M31;
+	ret.M14 = matrix.M41;
+
+	ret.M21 = matrix.M12;
+	ret.M22 = matrix.M22;
+	ret.M23 = matrix.M32;
+	ret.M24 = matrix.M42;
+
+	ret.M31 = matrix.M13;
+	ret.M32 = matrix.M23;
+	ret.M33 = matrix.M33;
+	ret.M34 = matrix.M43;
+
+	ret.M41 = matrix.M14;
+	ret.M42 = matrix.M24;
+	ret.M43 = matrix.M34;
+	ret.M44 = matrix.M44;
+
+	result = ret;
+}
+
 // Matrix addition
 Matrix operator+(const Matrix& matrix1, const Matrix& matrix2) {
 	return Matrix(
